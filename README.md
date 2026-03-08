@@ -28,11 +28,28 @@ This app goes beyond text-only generation by providing:
 - Downloadable audio files
 - 10 professional voice options with pitch/rate/volume controls
 
+### **4. AI-Generated Videos** (Veo 3.1) ⭐ NEW
+- **Real video generation** powered by Google's Veo 3.1 Vertex AI model
+- Scene-by-scene video creation from storyboard descriptions
+- Professional quality: 1080p, 24fps, 16:9 aspect ratio
+- Automatic fallback to animated SVG if Veo unavailable
+- Seamless playback with synchronized TTS audio
+
+### **5. Photorealistic Images** (Imagen 3) ⭐ NEW
+- **Professional product photography** using Google's Imagen 3
+- Three distinct styles: Modern, Minimal, Bold
+- Scene thumbnails with cinematic composition
+- High-resolution commercial-quality images
+- Automatic fallback to SVG graphics if Imagen unavailable
+
 ## 🚀 Google Cloud Integration
 
-### **Google SDKs Used:**
-- ✅ `@google/generative-ai` - Gemini AI for campaign generation
+### **Google SDKs & APIs Used:**
+- ✅ `@google/generative-ai` - Gemini 2.5 Flash for campaign generation
 - ✅ Google Cloud Text-to-Speech API - Neural2 voices
+- ✅ **Google Vertex AI** - Veo 3.1 for video generation ⭐ NEW
+- ✅ **Google Vertex AI** - Imagen 3 for photorealistic images ⭐ NEW
+- ✅ `google-auth-library` - Vertex AI authentication
 - ✅ Deployed on **Google Cloud Run** or **Firebase Hosting**
 
 ### **Why It's Not Text-Only:**
@@ -116,6 +133,30 @@ For audio generation:
    ```
 
 **Note**: TTS is optional. The app will work without it but won't generate audio.
+
+### Setting Up Vertex AI (Veo 3.1 + Imagen 3) ⭐ NEW
+
+For real AI-generated videos and images:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the following APIs:
+   - **Vertex AI API**
+   - **Cloud AI Platform API**
+4. Set up authentication:
+   - Create a service account with "Vertex AI User" role
+   - Download the JSON key file
+5. Add to your `.env`:
+   ```
+   GOOGLE_CLOUD_PROJECT_ID=your-project-id
+   GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-service-account-key.json
+   ```
+
+**Note**: Vertex AI is optional. The app will fall back to SVG-generated images/videos if unavailable.
+
+**Models Used**:
+- **Veo 3.1**: Real video generation (1080p, 24fps, 16:9)
+- **Imagen 3**: Photorealistic product and scene images
 
 ## 🎮 Usage
 

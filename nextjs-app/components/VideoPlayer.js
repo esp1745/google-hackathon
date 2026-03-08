@@ -9,9 +9,14 @@ export default function VideoPlayer({ storyboard, productName, voiceSettings }) 
   const [sceneAudios, setSceneAudios] = useState({});
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [audioLoaded, setAudioLoaded] = useState(false);
+  const [sceneVideos, setSceneVideos] = useState({});
+  const [loadingVideos, setLoadingVideos] = useState(false);
+  const [videosLoaded, setVideosLoaded] = useState(false);
+  const [useVeo, setUseVeo] = useState(true);
   const audioRef = useRef(null);
   const progressIntervalRef = useRef(null);
   const timeoutRef = useRef(null);
+  const videoRef = useRef(null);
 
   const scenes = storyboard?.scenes || [];
   const currentScene = scenes[currentSceneIndex];
@@ -54,6 +59,52 @@ export default function VideoPlayer({ storyboard, productName, voiceSettings }) 
       console.error('Error generating scene audios:', error);
     } finally {
       setLoadingAudio(false);
+    }
+  };
+
+  const generateAllSceneVideos = async () => {
+    if (loadingVideos || videosLoaded || !useVeo) return;
+    
+    setLoadingVideos(true);
+    const videos = {};
+
+    try {
+      console.log('Generating Veo videos for', scenes.length, 'scenes...');
+      for (const scene of scenes) {
+        // Create detailed video prompt
+        const videoPrompt = `Create a ${parseDuration(scene.duration)}-second professional marketing video: ${scene.visual_description}. ${scene.on_screen_text ? `Display text: "${scene.on_screen_text}".` : ''} Cinematic, high quality, smooth camera movements.`;
+        
+        const response = await fetch('/api/veo-generate-video', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: videoPrompt,
+            duration: parseDuration(scene.duration)
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.videoUrl) {
+          videos[scene.scene_number] = data.videoUrl;
+          console.log('Veo video generated for scene', scene.scene_number);
+        } else if (data.fallback) {
+          console.log('Veo unavailable, using SVG fallback');
+          setUseVeo(false);
+          break;
+        }
+      }
+      
+      if (Object.keys(videos).length > 0) {
+        setSceneVideos(videos);
+        setVideosLoaded(true);
+        console.log('All Veo videos generated:', Object.keys(videos).length, 'scenes');
+      }
+    } catch (error) {
+      console.error('Error generating Veo videos:', error);
+      setUseVeo(false);
+    } finally {
+      setLoadingVideos(false);
     }
   };
 
@@ -183,6 +234,10 @@ export default function VideoPlayer({ storyboard, productName, voiceSettings }) 
     if (!audioLoaded && !loadingAudio) {
       await generateAllSceneAudios();
     }
+    // Generate videos if not loaded (Veo 3.1)
+    if (!videosLoaded && !loadingVideos && useVeo) {
+      await generateAllSceneVideos();
+    }
     setIsPlaying(true);
   };
 
@@ -295,16 +350,44 @@ export default function VideoPlayer({ storyboard, productName, voiceSettings }) 
       <div className="relative rounded-lg overflow-hidden border border-dark-border bg-black mb-4">
         {/* 16:9 Video Canvas */}
         <div className="aspect-video relative">
-          {/* Scene Background */}
-          <div 
-            className="absolute inset-0 transition-all duration-500"
-            style={{
-              background: `linear-gradient(135deg, 
-                ${getSceneColors(currentSceneIndex).bg1}, 
-                ${getSceneColors(currentSceneIndex).bg2})`,
-              opacity: isPlaying ? 1 : 0.7
-            }}
-          />
+          
+          {/* Real Veo 3.1 Video (if available) */}
+          {useVeo && sceneVideos[currentScene.scene_number] ? (
+            <video
+              ref={videoRef}
+              src={sceneVideos[currentScene.scene_number]}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay={isPlaying}
+              muted={isMuted}
+              onEnded={() => moveToNextScene()}
+            />
+          ) : (
+            <>
+              {/* Fallback: SVG Scene Background */}
+              <div 
+                className="absolute inset-0 transition-all duration-500"
+                style={{
+                  background: `linear-gradient(135deg, 
+                    ${getSceneColors(currentSceneIndex).bg1}, 
+                    ${getSceneColors(currentSceneIndex).bg2})`,
+                  opacity: isPlaying ? 1 : 0.7
+                }}
+              />
+            </>
+          )}
+          
+          {/* Scene Background (only for non-video mode) */}
+          {!sceneVideos[currentScene.scene_number] && (
+            <div 
+              className="absolute inset-0 transition-all duration-500"
+              style={{
+                background: `linear-gradient(135deg, 
+                  ${getSceneColors(currentSceneIndex).bg1}, 
+                  ${getSceneColors(currentSceneIndex).bg2})`,
+                opacity: isPlaying ? 1 : 0.7
+              }}
+            />
+          )}
 
           {/* Scene Content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center">
@@ -339,6 +422,14 @@ export default function VideoPlayer({ storyboard, productName, voiceSettings }) 
               <div className="absolute bottom-6 left-6 flex items-center gap-2 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-full border border-primary/50">
                 <div className="animate-spin w-3 h-3 border-2 border-primary/20 border-t-primary rounded-full"></div>
                 <span className="text-xs text-white/80">Loading audio...</span>
+              </div>
+            )}
+
+            {/* Loading Veo 3.1 Video Indicator */}
+            {loadingVideos && (
+              <div className="absolute bottom-6 right-6 flex items-center gap-2 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-full border border-purple-500/50">
+                <div className="animate-spin w-3 h-3 border-2 border-purple-500/20 border-t-purple-500 rounded-full"></div>
+                <span className="text-xs text-white/80">Generating Veo 3.1 videos...</span>
               </div>
             )}
           </div>

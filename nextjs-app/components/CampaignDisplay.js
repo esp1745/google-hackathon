@@ -52,20 +52,57 @@ export default function CampaignDisplay({ campaign }) {
     const images = {};
     
     try {
-      // Generate images for each scene
+      // Generate images for each scene using Imagen 3
       for (const scene of campaign.video_storyboard.scenes) {
-        const response = await fetch('/api/generate-scene-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            visualDescription: scene.visual_description,
-            industry: campaign.core_narrative?.positioning_statement?.split(' ')[0] || 'business',
-            sceneNumber: scene.scene_number
-          })
-        });
-        
-        const data = await response.json();
-        images[scene.scene_number] = data.imageUrl;
+        try {
+          // Create detailed prompt from scene description
+          const prompt = `${scene.visual_description}, cinematic composition, professional commercial photography, high quality, detailed`;
+          
+          // Try Imagen 3 first
+          const response = await fetch('/api/imagen-generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              prompt: prompt,
+              aspectRatio: '16:9',
+              sampleCount: 1
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.error) {
+            // Fallback to SVG if Imagen unavailable
+            console.log(`Imagen unavailable for scene ${scene.scene_number}, falling back to SVG`);
+            const svgResponse = await fetch('/api/generate-scene-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                visualDescription: scene.visual_description,
+                industry: campaign.core_narrative?.positioning_statement?.split(' ')[0] || 'business',
+                sceneNumber: scene.scene_number
+              })
+            });
+            const svgData = await svgResponse.json();
+            images[scene.scene_number] = svgData.imageUrl;
+          } else {
+            images[scene.scene_number] = data.image;
+          }
+        } catch (error) {
+          console.error(`Error generating image for scene ${scene.scene_number}:`, error);
+          // Fallback to SVG on error
+          const svgResponse = await fetch('/api/generate-scene-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              visualDescription: scene.visual_description,
+              industry: campaign.core_narrative?.positioning_statement?.split(' ')[0] || 'business',
+              sceneNumber: scene.scene_number
+            })
+          });
+          const svgData = await svgResponse.json();
+          images[scene.scene_number] = svgData.imageUrl;
+        }
       }
       
       setSceneImages(images);
@@ -85,18 +122,52 @@ export default function CampaignDisplay({ campaign }) {
       const product = campaign?.core_narrative?.unique_value_proposition || 'Product';
       const industry = campaign?.core_narrative?.positioning_statement?.split(' ')[0]?.toLowerCase() || 'tech';
       
-      // Generate 3 different style product images
-      const styles = ['modern', 'minimal', 'bold'];
+      // Generate 3 different style product images using Imagen 3
+      const styles = [
+        { name: 'modern', prompt: `Professional product photography of ${product} in a modern tech environment, sleek design, studio lighting, photorealistic, high-end commercial photography, ${industry} industry aesthetic` },
+        { name: 'minimal', prompt: `Minimalist product shot of ${product} on clean white background, simple elegant composition, soft shadows, professional e-commerce photography, high resolution` },
+        { name: 'bold', prompt: `Bold dramatic product photography of ${product} with vibrant colors and dynamic lighting, creative commercial style, eye-catching composition, ${industry} branding` }
+      ];
       
       for (const style of styles) {
-        const response = await fetch('/api/generate-product-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ product, industry, style })
-        });
-        
-        const data = await response.json();
-        images[style] = data.image;
+        try {
+          // Try Imagen 3 first
+          const response = await fetch('/api/imagen-generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              prompt: style.prompt,
+              aspectRatio: '1:1',
+              sampleCount: 1
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.error) {
+            // Fallback to SVG if Imagen unavailable
+            console.log(`Imagen unavailable for ${style.name}, falling back to SVG`);
+            const svgResponse = await fetch('/api/generate-product-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ product, industry, style: style.name })
+            });
+            const svgData = await svgResponse.json();
+            images[style.name] = svgData.image;
+          } else {
+            images[style.name] = data.image;
+          }
+        } catch (error) {
+          console.error(`Error generating ${style.name} image:`, error);
+          // Fallback to SVG on error
+          const svgResponse = await fetch('/api/generate-product-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product, industry, style: style.name })
+          });
+          const svgData = await svgResponse.json();
+          images[style.name] = svgData.image;
+        }
       }
       
       setProductImages(images);
