@@ -1,4 +1,4 @@
-# Vertex AI Setup Guide (Veo 3.1 + Imagen 3)
+# Vertex AI Setup Guide (Veo 3.1 + Nano Banana 2)
 
 This guide explains how to enable **real AI-generated videos and images** using Google's Vertex AI platform.
 
@@ -13,7 +13,7 @@ This guide explains how to enable **real AI-generated videos and images** using 
 ### With Vertex AI (Enhanced) ⭐
 - ✅ All default features PLUS:
 - ✅ **Veo 3.1 real video generation** (1080p MP4s, 24fps, cinematic quality)
-- ✅ **Imagen 3 photorealistic images** (professional product photography)
+- ✅ **Nano Banana 2 photorealistic images** (professional product photography)
 - ✅ Automatic fallback to SVG if Vertex AI unavailable
 
 ## 📋 Prerequisites
@@ -85,7 +85,7 @@ npm install google-auth-library
 4. Click **"Play"** in the Video Storyboard tab
 5. Check console logs for Vertex AI status:
    - ✅ "Using Veo 3.1 for video generation"
-   - ✅ "Using Imagen 3 for images"
+   - ✅ "Using Nano Banana 2 for images"
    - ⚠️ "Falling back to SVG" (if Vertex AI unavailable)
 
 ## 🔍 Troubleshooting
@@ -115,7 +115,7 @@ npm install google-auth-library
 - 5-second scene = ~$0.50-1.00
 - Full campaign (5 scenes) = ~$2.50-5.00
 
-**Imagen 3 (Image Generation)**:
+**Nano Banana 2 (Image Generation)**:
 - ~$0.02-0.05 per image
 - 3 product images = ~$0.06-0.15
 - 5 scene thumbnails = ~$0.10-0.25
@@ -163,7 +163,7 @@ Edit `/nextjs-app/components/VideoPlayer.js`:
 const prompt = `${scene.visual_description}, cinematic 4K commercial, professional lighting, smooth camera movement, ${scene.duration}`;
 ```
 
-### Image Prompts (Imagen 3)
+### Image Prompts (Nano Banana 2)
 
 Edit `/nextjs-app/components/CampaignDisplay.js`:
 
@@ -183,7 +183,7 @@ const prompt = `Professional product photography of ${product}, studio lighting,
 
 - [Vertex AI Documentation](https://cloud.google.com/vertex-ai/docs)
 - [Veo 3.1 Model Card](https://cloud.google.com/vertex-ai/docs/generative-ai/video/overview)
-- [Imagen 3 Documentation](https://cloud.google.com/vertex-ai/docs/generative-ai/image/overview)
+- [Nano Banana 2 Documentation](https://cloud.google.com/vertex-ai/docs/generative-ai/image/overview)
 - [Service Account Best Practices](https://cloud.google.com/iam/docs/best-practices-service-accounts)
 
 ---

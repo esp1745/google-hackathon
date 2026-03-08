@@ -52,13 +52,13 @@ export default function CampaignDisplay({ campaign }) {
     const images = {};
     
     try {
-      // Generate images for each scene using Imagen 3
+      // Generate images for each scene using Nano Banana 2
       for (const scene of campaign.video_storyboard.scenes) {
         try {
           // Create detailed prompt from scene description
           const prompt = `${scene.visual_description}, cinematic composition, professional commercial photography, high quality, detailed`;
           
-          // Try Imagen 3 first
+          // Try Nano Banana 2 first
           const response = await fetch('/api/imagen-generate-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -72,8 +72,8 @@ export default function CampaignDisplay({ campaign }) {
           const data = await response.json();
           
           if (data.error) {
-            // Fallback to SVG if Imagen unavailable
-            console.log(`Imagen unavailable for scene ${scene.scene_number}, falling back to SVG`);
+            // Fallback to SVG if Nano Banana 2 unavailable
+            console.log(`Nano Banana 2 unavailable for scene ${scene.scene_number}, falling back to SVG`);
             const svgResponse = await fetch('/api/generate-scene-image', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -122,7 +122,7 @@ export default function CampaignDisplay({ campaign }) {
       const product = campaign?.core_narrative?.unique_value_proposition || 'Product';
       const industry = campaign?.core_narrative?.positioning_statement?.split(' ')[0]?.toLowerCase() || 'tech';
       
-      // Generate 3 different style product images using Imagen 3
+      // Generate 3 different style product images using Nano Banana 2
       const styles = [
         { name: 'modern', prompt: `Professional product photography of ${product} in a modern tech environment, sleek design, studio lighting, photorealistic, high-end commercial photography, ${industry} industry aesthetic` },
         { name: 'minimal', prompt: `Minimalist product shot of ${product} on clean white background, simple elegant composition, soft shadows, professional e-commerce photography, high resolution` },
@@ -131,7 +131,7 @@ export default function CampaignDisplay({ campaign }) {
       
       for (const style of styles) {
         try {
-          // Try Imagen 3 first
+          // Try Nano Banana 2 first
           const response = await fetch('/api/imagen-generate-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -145,8 +145,8 @@ export default function CampaignDisplay({ campaign }) {
           const data = await response.json();
           
           if (data.error) {
-            // Fallback to SVG if Imagen unavailable
-            console.log(`Imagen unavailable for ${style.name}, falling back to SVG`);
+            // Fallback to SVG if Nano Banana 2 unavailable
+            console.log(`Nano Banana 2 unavailable for ${style.name}, falling back to SVG`);
             const svgResponse = await fetch('/api/generate-product-image', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

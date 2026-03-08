@@ -35,12 +35,12 @@ This app goes beyond text-only generation by providing:
 - Automatic fallback to animated SVG if Veo unavailable
 - Seamless playback with synchronized TTS audio
 
-### **5. Photorealistic Images** (Imagen 3) ⭐ NEW
-- **Professional product photography** using Google's Imagen 3
+### **5. Photorealistic Images** (Nano Banana 2) ⭐ NEW
+- **Professional product photography** using Google's Nano Banana 2
 - Three distinct styles: Modern, Minimal, Bold
 - Scene thumbnails with cinematic composition
 - High-resolution commercial-quality images
-- Automatic fallback to SVG graphics if Imagen unavailable
+- Automatic fallback to SVG graphics if Nano Banana 2 unavailable
 
 ## 🚀 Google Cloud Integration
 
@@ -48,7 +48,7 @@ This app goes beyond text-only generation by providing:
 - ✅ `@google/generative-ai` - Gemini 2.5 Flash for campaign generation
 - ✅ Google Cloud Text-to-Speech API - Neural2 voices
 - ✅ **Google Vertex AI** - Veo 3.1 for video generation ⭐ NEW
-- ✅ **Google Vertex AI** - Imagen 3 for photorealistic images ⭐ NEW
+- ✅ **Google Vertex AI** - Nano Banana 2 for photorealistic images ⭐ NEW
 - ✅ `google-auth-library` - Vertex AI authentication
 - ✅ Deployed on **Google Cloud Run** or **Firebase Hosting**
 
@@ -134,7 +134,7 @@ For audio generation:
 
 **Note**: TTS is optional. The app will work without it but won't generate audio.
 
-### Setting Up Vertex AI (Veo 3.1 + Imagen 3) ⭐ NEW
+### Setting Up Vertex AI (Veo 3.1 + Nano Banana 2) ⭐ NEW
 
 For real AI-generated videos and images:
 
@@ -156,7 +156,7 @@ For real AI-generated videos and images:
 
 **Models Used**:
 - **Veo 3.1**: Real video generation (1080p, 24fps, 16:9)
-- **Imagen 3**: Photorealistic product and scene images
+- **Nano Banana 2**: Photorealistic product and scene images
 
 ## 🎮 Usage
 

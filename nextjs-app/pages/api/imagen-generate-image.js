@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID || 'your-project-id';
     const location = 'us-central1';
 
-    // Imagen 3 API endpoint
-    const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/imagen-3.0-generate-001:predict`;
+    // Nano Banana 2 API endpoint (Google's latest image generation model)
+    const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/imagegeneration@006:predict`;
 
     const requestBody = {
       instances: [
@@ -33,9 +33,10 @@ export default async function handler(req, res) {
       parameters: {
         sampleCount: numberOfImages,
         aspectRatio: aspectRatio,
-        safetyFilterLevel: 'block_some',
+        safetySetting: 'block_some',
         personGeneration: 'allow_adult',
-        negativePrompt: 'blurry, low quality, distorted, ugly'
+        language: 'en',
+        addWatermark: false
       }
     };
 
@@ -56,7 +57,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         images: images,
-        model: 'imagen-3.0',
+        model: 'nano-banana-2',
         prompt: prompt
       });
     } else {
@@ -64,14 +65,14 @@ export default async function handler(req, res) {
     }
 
   } catch (error) {
-    console.error('Imagen generation error:', error);
+    console.error('Nano Banana 2 generation error:', error);
     
-    // Fallback to SVG if Imagen fails
+    // Fallback to SVG if Nano Banana 2 fails
     return res.status(200).json({
       success: false,
       error: error.message,
       fallback: true,
-      message: 'Imagen 3 unavailable. Using SVG fallback. Please check Vertex AI setup.',
+      message: 'Nano Banana 2 unavailable. Using SVG fallback. Please check Vertex AI setup.',
       setupInstructions: 'Set GOOGLE_CLOUD_PROJECT_ID in .env.local and enable Vertex AI API'
     });
   }
