@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { prompt, duration = 5 } = req.body;
+  const { prompt, duration = 5, cameraMotion = 'dynamic', style = 'cinematic' } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
@@ -33,7 +33,15 @@ export default async function handler(req, res) {
             aspectRatio: '16:9',
             resolution: '1080p',
             frameRate: 24,
-            outputFormat: 'mp4'
+            outputFormat: 'mp4',
+            // Enhanced creative parameters for more interactive videos
+            cameraMotion: cameraMotion, // 'static', 'dynamic', 'follow', 'orbit'
+            style: style, // 'cinematic', 'documentary', 'commercial', 'dramatic'
+            quality: 'highest',
+            creativity: 0.8, // Higher creativity for more engaging videos
+            motionAmount: 'medium-high', // More dynamic movement
+            colorGrading: 'professional', // Enhanced color grading
+            stabilization: true
           }
         }
       ]

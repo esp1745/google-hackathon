@@ -52,11 +52,15 @@ export default function CampaignDisplay({ campaign }) {
     const images = {};
     
     try {
-      // Generate images for each scene using Nano Banana 2
+      // Generate interactive, campaign-specific images for each scene using Nano Banana 2
       for (const scene of campaign.video_storyboard.scenes) {
         try {
-          // Create detailed prompt from scene description
-          const prompt = `${scene.visual_description}, cinematic composition, professional commercial photography, high quality, detailed`;
+          // Create highly detailed, context-rich prompt
+          const product = campaign?.core_narrative?.unique_value_proposition || 'product';
+          const brandVibe = campaign?.core_narrative?.brand_story?.split(' ').slice(0, 10).join(' ') || 'innovative and engaging';
+          const targetAudience = campaign?.key_messages?.[0]?.primary_message?.split(' ').slice(0, 8).join(' ') || 'modern professionals';
+          
+          const prompt = `Scene ${scene.scene_number} for ${product} marketing campaign: ${scene.visual_description}. ${scene.on_screen_text ? `Featuring text: "${scene.on_screen_text}". ` : ''}Context: ${brandVibe}. Target audience: ${targetAudience}. Style: cinematic commercial photography, professional color grading, dramatic lighting with depth, humans showing genuine emotion and interaction, lifestyle context showing real-world product use, dynamic composition with visual interest, modern advertising aesthetic, 4K ultra high quality, photorealistic details.`;
           
           // Try Nano Banana 2 first
           const response = await fetch('/api/imagen-generate-image', {
@@ -122,11 +126,24 @@ export default function CampaignDisplay({ campaign }) {
       const product = campaign?.core_narrative?.unique_value_proposition || 'Product';
       const industry = campaign?.core_narrative?.positioning_statement?.split(' ')[0]?.toLowerCase() || 'tech';
       
-      // Generate 3 different style product images using Nano Banana 2
+      // Generate 3 highly interactive, context-rich product images using Nano Banana 2
+      const brandStory = campaign?.core_narrative?.brand_story || '';
+      const positioning = campaign?.core_narrative?.positioning_statement || '';
+      const keyMessage = campaign?.key_messages?.[0]?.primary_message || 'innovation and quality';
+      
       const styles = [
-        { name: 'modern', prompt: `Professional product photography of ${product} in a modern tech environment, sleek design, studio lighting, photorealistic, high-end commercial photography, ${industry} industry aesthetic` },
-        { name: 'minimal', prompt: `Minimalist product shot of ${product} on clean white background, simple elegant composition, soft shadows, professional e-commerce photography, high resolution` },
-        { name: 'bold', prompt: `Bold dramatic product photography of ${product} with vibrant colors and dynamic lighting, creative commercial style, eye-catching composition, ${industry} branding` }
+        { 
+          name: 'modern', 
+          prompt: `Interactive lifestyle shot of ${product} being used by real people in a modern ${industry} environment: ${positioning}. Scene shows genuine human interaction and engagement with the product, professional office or workspace setting, natural candid moments, warm professional lighting, diverse team collaborating, photorealistic 4K commercial photography showing authentic product benefits in action.` 
+        },
+        { 
+          name: 'minimal', 
+          prompt: `Hero product shot of ${product} with creative composition on premium surface: ${keyMessage}. Artistic angle showing product details and craftsmanship, subtle reflections and textures, elegant minimalist composition with negative space, soft gradient background with brand colors, professional studio lighting with rim light highlighting edges, ultra high-end commercial photography, magazine quality.` 
+        },
+        { 
+          name: 'bold', 
+          prompt: `Dynamic action shot of ${product} in real-world ${industry} scenario: ${brandStory.split('.')[0]}. Showing product solving real problems for real people, energetic scene with movement and vitality, vibrant professional color palette, humans showing satisfaction and success, environmental context showing scale and impact, dramatic lighting with depth, bold commercial advertising style, inspiring and aspirational mood.` 
+        }
       ];
       
       for (const style of styles) {

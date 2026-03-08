@@ -71,15 +71,32 @@ export default function VideoPlayer({ storyboard, productName, voiceSettings }) 
     try {
       console.log('Generating Veo videos for', scenes.length, 'scenes...');
       for (const scene of scenes) {
-        // Create detailed video prompt
-        const videoPrompt = `Create a ${parseDuration(scene.duration)}-second professional marketing video: ${scene.visual_description}. ${scene.on_screen_text ? `Display text: "${scene.on_screen_text}".` : ''} Cinematic, high quality, smooth camera movements.`;
+        // Create highly detailed, interactive video prompt with camera movements and dynamic elements
+        const cameraMovements = [
+          'smooth dolly forward tracking shot',
+          'cinematic crane shot rising up',
+          'dynamic orbit around subject',
+          'slider shot moving left to right',
+          'handheld documentary style with slight movement',
+          'steady gimbal tracking',
+          'slow push-in to reveal details'
+        ];
+        const selectedCamera = cameraMovements[scene.scene_number % cameraMovements.length];
+        
+        const dynamicElements = scene.scene_number === 1 ? 'opening with energy and excitement' :
+                               scene.scene_number === scenes.length ? 'powerful finale with strong call-to-action' :
+                               'building momentum and engagement';
+        
+        const videoPrompt = `Professional ${parseDuration(scene.duration)}-second marketing commercial for ${productName || 'product'}: ${scene.visual_description}. ${scene.on_screen_text ? `Feature bold text overlay: "${scene.on_screen_text}". ` : ''}Camera: ${selectedCamera}. Style: ${dynamicElements}, cinematic color grading, professional lighting, 4K quality, engaging composition with depth, human interest and emotion, modern advertising aesthetic, subtle motion graphics, vibrant and eye-catching.`;
         
         const response = await fetch('/api/veo-generate-video', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             prompt: videoPrompt,
-            duration: parseDuration(scene.duration)
+            duration: parseDuration(scene.duration),
+            cameraMotion: 'dynamic',
+            style: 'commercial'
           })
         });
 

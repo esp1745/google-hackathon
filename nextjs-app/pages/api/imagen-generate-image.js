@@ -36,7 +36,14 @@ export default async function handler(req, res) {
         safetySetting: 'block_some',
         personGeneration: 'allow_adult',
         language: 'en',
-        addWatermark: false
+        addWatermark: false,
+        // Enhanced creative parameters for more interactive, engaging images
+        guidanceScale: 12, // Higher guidance for prompt adherence
+        seed: Math.floor(Math.random() * 1000000), // Random seed for variety
+        numberOfImages: numberOfImages,
+        outputMimeType: 'image/png',
+        compressionQuality: 100, // Maximum quality
+        // Additional style enhancements\n        negativePrompt: 'blurry, low quality, distorted, ugly, amateur, stock photo, generic, boring, static, flat lighting, poor composition',\n        stylePreset: 'photographic' // Photorealistic style for commercial use
       }
     };
 
